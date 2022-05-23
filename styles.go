@@ -15,7 +15,7 @@ func WriteSeveral(w *strings.Builder, s ...string) {
 }
 
 /*
-Styles for the header
+All of the possible modules
 */
 var modules = []module{
 	{
