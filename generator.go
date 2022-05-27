@@ -53,19 +53,27 @@ func Generate() string {
 	t.CornerSize = Unit{10, "pt"}
 	// Add random styles until we can't find any new ones
 	affected := make(map[string]bool)
+	perms := make([]*module, len(modules))
+	for i := range modules {
+		perms[i] = &modules[i]
+	}
+	// Shuffle modules
+	for i := int64(len(perms)) - 1; i > 0; i-- {
+		s, err := rand.Int(rand.Reader, big.NewInt(i))
+		if err != nil {
+			panic(err)
+		}
+		y := s.Int64()
+		perms[y], perms[i] = perms[i], perms[y]
+	}
 trials:
-	for i := 0; i < 10; i++ {
-		m := choice(modules)
+	for _, m := range perms {
 		for _, a := range m.Affects {
 			if affected[a] {
 				continue trials
 			}
 		}
 		m.Write(builder, t)
-		for _, a := range m.Affects {
-			affected[a] = true
-		}
-		i = 0 // Reset the remaining trial count
 	}
 	return builder.String()
 }
